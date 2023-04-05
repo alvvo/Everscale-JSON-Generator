@@ -22,28 +22,83 @@
             tvm.accept();
         }
 
-        function getJson() public returns(string json){
+        /**
+        *   @notice Sample of use this library 
+        */
+        function getJson() public returns(string json) {
             return(
+                /**
+                *   @dev Create JSON
+                */
                 JSONGenerator._createJSON([
-                    JSONGenerator._addSingle("single0", "value0", true),
-                    JSONGenerator._addSingle("single1", "value1", true),
-                    JSONGenerator._addObject("object0",
+                    /**
+                    *   @dev Create single JSON element
+                    */
+                    JSONGenerator._addSingle("singleString", "text", true),
+                    JSONGenerator._addSingle("singleNumber", format("{}", 0), false),
+                    /**
+                    *   @dev Create single-type arrays (named & unnamed)
+                    */
+                    JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true),
+                    JSONGenerator._addSingleTypeArray(false, "array1", [format("{}", 0), format("{}", 1)], false),
+                    /**
+                    *   @dev Create multiple-type arrays (named & unnamed)
+                    */
+                    JSONGenerator._addMultipleTypeArray(true, "array2", [format("{}", 0), "text1"], [false, true]),
+                    JSONGenerator._addMultipleTypeArray(false, "array3", [format("{}", 0), "text1"], [false, true]),
+                    /**
+                    *   @dev Create objects (named & unnamed)
+                    */
+                    JSONGenerator._addObject(true, "object0",
                         [
-                            JSONGenerator._addSingle("single2", "value2", true),
-                            JSONGenerator._addSingle("single3", "value3", true),
-                            JSONGenerator._addArray("array0",
-                                [
-                                    "0", "1", "2"
-                                ],
-                                false
-                            ),
-                            JSONGenerator._addArray("array1",
-                                [
-                                    "element0", "element1", "element2"
-                                ],
-                                true
-                            )
+                            JSONGenerator._addSingle("singleString", "text", true),
+                            JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true),
+                            JSONGenerator._addMultipleTypeArray(true, "array2", [format("{}", 0), "text1"], [false, true])
                         ]
+                    ),
+                    JSONGenerator._addObject(false, "object1",
+                        [
+                            JSONGenerator._addSingle("singleString", "text", true),
+                            JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true),
+                            JSONGenerator._addMultipleTypeArray(true, "array2", [format("{}", 0), "text1"], [false, true])
+                        ]
+                    ),
+                    /**
+                    *   @dev Create object arrays (named & unnamed)
+                    */
+                    JSONGenerator._addSingleTypeArray(true, "array4", 
+                        [
+                            JSONGenerator._addObject(true, "object0",
+                                [
+                                    JSONGenerator._addSingle("singleString", "text", true),
+                                    JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true)
+                                ]
+                            ),
+                            JSONGenerator._addObject(true, "object1",
+                                [
+                                    JSONGenerator._addSingle("singleString", "text", true),
+                                    JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true)
+                                ]
+                            )
+                        ], 
+                        false
+                    ),
+                    JSONGenerator._addSingleTypeArray(false, "array5", 
+                        [
+                            JSONGenerator._addObject(true, "object0",
+                                [
+                                    JSONGenerator._addSingle("singleString", "text", true),
+                                    JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true)
+                                ]
+                            ),
+                            JSONGenerator._addObject(true, "object1",
+                                [
+                                    JSONGenerator._addSingle("singleString", "text", true),
+                                    JSONGenerator._addSingleTypeArray(true, "array0", ["text0", "text1"], true)
+                                ]
+                            )
+                        ], 
+                        false
                     )
                 ])
             );
@@ -70,15 +125,32 @@
     *   `value` - The value of the key-value pair.
     *   `isStringValue` - A flag indicating whether the value is a string or not.
     *   `element` - String of key-value pair.
-*   ##### JSONGenerator._addArray:    
+*   ##### JSONGenerator._addSingleTypeArray:    
     ```solidity
-    function _addArray(
+    function _addSingleTypeArray(
+        bool isNamed,
         string name,
         string[] values,
         bool isStringValues
     ) internal virtual returns(string element)
     ```
-    This function creates a array key-value pair:
+    This function creates a single-type array key-value pair:
+    *   `isNamed` - The parameter specifies whether the array will have a key name or not.
+    *   `name` - The key name of the key-value pair.
+    *   `values` - The value of the key-value pair.
+    *   `isStringValues` - A flag indicating whether the value is a string or not.
+    *   `element` - String of key-value pair.
+*   ##### JSONGenerator._addMultipleTypeArray:    
+    ```solidity
+    function _addMultipleTypeArray(
+        bool isNamed,
+        string name,
+        string[] values,
+        bool[] isStringValues
+    ) internal virtual returns(string element)
+    ```
+    This function creates a single-type array key-value pair:
+    *   `isNamed` - The parameter specifies whether the array will have a key name or not.
     *   `name` - The key name of the key-value pair.
     *   `values` - The value of the key-value pair.
     *   `isStringValues` - Arrays of flags indicating whether the value is a string or not.
@@ -86,11 +158,13 @@
 *   ##### JSONGenerator._addObject:    
     ```solidity
     function _addObject(
+        bool isNamed,
         string name,
         string[] elements
     ) internal virtual returns(string element)
     ```
     The function for forming an object from elements:
+    *   `isNamed` - The parameter specifies whether the array will have a key name or not.
     *   `name` - The key name of the key-value pair.
     *   `elements` - Array of string elements.
     *   `element` - String of key-value pair.
